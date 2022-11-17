@@ -1,11 +1,14 @@
 function getGames() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('ゲーム一覧');
+
+  // エラーメッセージ表示用（script上での実行の際はコメントアウト必要）
   const ui = SpreadsheetApp.getUi();
+  
   // steamIdはH1に記載
-  const steamId = sheet.getRange('H1').getValue().toString();
+  const steamId = sheet.getRange('H1').getValue();
   console.log(steamId.length);
-  if(steamId.length !== 17) {
+  if(steamId.toString().length !== 17) {
     ui.alert('steamIdの桁数が不正です');
     return;
   }
@@ -24,11 +27,10 @@ function getGames() {
   const responseBody = response.getContentText();
 
   if (responseCode === 200) {
-    // SSをきれいにする
-    sheet.getRange("A2:E1000").clear();
     const responseJson = JSON.parse(responseBody);
 
-    if(!responseJson.response.length) {
+    // 空の場合
+    if(!Object.keys(responseJson.response).length) {
       ui.alert('ゲームの取得に失敗しました。');
       return;
     }
@@ -46,4 +48,10 @@ function getGames() {
     Logger.log(Utilities.formatString("Request failed. Expected 200, got %d: %s", responseCode, responseBody));
     ui.alert('ゲームの取得に失敗しました。');
   }
+}
+
+function clearGameList() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('ゲーム一覧');
+  sheet.getRange("A2:E1000").clear();
 }
