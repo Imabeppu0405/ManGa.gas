@@ -48,6 +48,7 @@ function createInsertSql() {
     // 値の設定
     for(let column in columns) {
       let value = dataSheet.getRange(row,columns[column]).getValue();
+      value = value.toString().replace(/'/, "");
       
       if (value == '') {
         // 値が入っていない場合
@@ -77,7 +78,7 @@ function createInsertSql() {
             sql = sql + value;
             break;
           default:
-            sql = sql + "'" + dataSheet.getRange(row,columns[column]).getValue() + "'";
+            sql = sql + "'" + value + "'";
             break;
         } 
       }
